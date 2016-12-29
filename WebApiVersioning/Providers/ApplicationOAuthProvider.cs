@@ -15,14 +15,16 @@ namespace WebApiVersioning.Providers
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
+        private readonly SecurityService _securityService;
 
         /// <summary>
         /// Crea una istanza del provider settando il SecurityService utilizzato per le fasi di autenticazione.
         /// </summary>
         /// <param name="securityService"></param>
-        public ApplicationOAuthProvider()
+        public ApplicationOAuthProvider(SecurityService securityService)
         {
             _publicClientId = "self";
+            _securityService = securityService;
         }
 
         /// <summary>
@@ -34,32 +36,45 @@ namespace WebApiVersioning.Providers
         /// <returns></returns>
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-             if(context.UserName != context.Password){
-                throw new SecurityException("Utente non validato: username e password diversi!!!");
+            try
+            {
+                UserValidationResult result = _securityService.ValidateUser(context.UserName, context.Password);
+
+                switch (result)
+                {
+                    case UserValidationResult.InvalidCredentials:
+                        context.SetError("invalid_grant", "Credenziali non valide");
+                        break;
+                    case UserValidationResult.UserNotExtists:
+                        context.SetError("invalid_grant", "Utente non esiste");
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                context.SetError("invalid_grant", "Errore di validazine dell'utente");
             }
 
-            //try
-            //{
-                var p = new ClaimsPrincipal();
-                if (p == null)
-                {
-                    context.SetError("invalid_grant", "The user name or password is incorrect.");
-                    return;
-                }
+            if (context.HasError)
+                return;
 
-                var claimsIdentity = new ClaimsIdentity(p.FindAll(x => x.Type == System.Security.Claims.ClaimTypes.Name), OAuthDefaults.AuthenticationType);
+            var p = _securityService.CreatePrincipalForUsername(context.UserName);
+            if (p == null)
+            {
+                context.SetError("invalid_grant", "Utente non esiste.");        //Teoricamente qua non ci arriva mai (vedi controllo sopra)
+                return;
+            }
 
-                AuthenticationProperties properties = CreateProperties(context.UserName);
-                AuthenticationTicket ticket = new AuthenticationTicket(claimsIdentity, properties);
-                context.Validated(ticket);
-            //}
-            //catch (SecurityException se)
-            //{
-            //    // espongo l'errore di validazione con uno spazio prima di ogni lettera maiuscola.
-            //    context.SetError("invalid_grant", Regex.Replace(se.ValidationResult.ToString(), "([a-z])([A-Z])", "$1 $2"));
-            //}
+            var claimsIdentity = new ClaimsIdentity(p.FindAll(x => x.Type == ClaimTypes.Name), OAuthDefaults.AuthenticationType);
+
+            AuthenticationProperties properties = CreateProperties(context.UserName);
+            AuthenticationTicket ticket = new AuthenticationTicket(claimsIdentity, properties);
+            context.Validated(ticket);
         }
 
+       
         /// <summary>
         /// Metodo invocato ad autenticazione già avvenuta, prima di invare la risposta con il token al client.
         /// Aggiunge alla risposta (in chiaro) le properties settate nell'<see cref="AuthenticationTicket"/>.
@@ -75,7 +90,7 @@ namespace WebApiVersioning.Providers
 
             return Task.FromResult<object>(null);
         }
-        
+
         /// <summary>
         /// Implemetato per evitare che il mancato inserimento dell'header clientid nella richiesta impedisca
         /// l'autenticazione fatta nel <see cref="GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext)"/> 
