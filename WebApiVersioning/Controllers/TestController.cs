@@ -11,8 +11,9 @@ using System.Web.Http.Results;
 
 namespace WebApiVersioning.Controllers
 {
+    [Authorize]
     public class TestController : ApiController
-    {
+    { 
         public TestController()
         {
             Log.Debug("Test Controller");

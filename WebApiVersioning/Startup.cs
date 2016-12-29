@@ -24,11 +24,12 @@ namespace WebApiVersioning
             Log.Logger = cfg.CreateLogger();
 
             Log.Debug("Startup progetto");
-
+            
             var oAuthOptions = new OAuthAuthorizationServerOptions
             {
+                AccessTokenProvider = new OAuthTokenProvider(),
                 TokenEndpointPath = new PathString("/Token"),
-                Provider = new ApplicationOAuthProvider(),
+                Provider = new ApplicationOAuthProvider(new SecurityService()),
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(14), //TODO: da configurazione
                 //TODO: In production mode set AllowInsecureHttp = false
@@ -39,11 +40,13 @@ namespace WebApiVersioning
             // Valida i token a ogni richiesta e inserisce i claims dell'utente.
             var oAuthAuthentication = new OAuthBearerAuthenticationOptions
             {
+                AccessTokenProvider = new OAuthTokenProvider(),
                 AuthenticationMode = Microsoft.Owin.Security.AuthenticationMode.Active,
-                Provider = new AuthenticationOAuthProvider()
+                Provider = new AuthenticationOAuthProvider(new SecurityService())
             };
             app.UseOAuthBearerAuthentication(oAuthAuthentication);
             
+
             var httpConfiguration = new HttpConfiguration();
             WebApiConfig.Register(httpConfiguration);
             app.UseWebApi(httpConfiguration);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Owin.Security.OAuth;
+using Serilog;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -10,7 +11,13 @@ namespace WebApiVersioning.Providers
     /// </summary>
     public class AuthenticationOAuthProvider : OAuthBearerAuthenticationProvider
     {
-        
+        private readonly SecurityService _securityService;
+
+        public AuthenticationOAuthProvider(SecurityService securityService)
+        {
+            _securityService = securityService;
+        }
+
         /// <summary>
         /// Valida il token per una richiesta. Il token viene generato da: <see cref="ApplicationOAuthProvider"/>.
         /// </summary>
@@ -23,15 +30,22 @@ namespace WebApiVersioning.Providers
         /// </remarks>
         public override async Task ValidateIdentity(OAuthValidateIdentityContext context)
         {
-            //TODO: validare la data di scadenza del token
             if (context.IsValidated)
             {
-                //var p = await _securityService.CreatePrincipalForUsernameAsync(context.Ticket.Identity.Name);
-                //foreach(var claim in context.Ticket.Identity.Claims)
-                //{
-                //    context.Ticket.Identity.RemoveClaim(claim);
-                //}                
-                //context.Ticket.Identity.AddClaims(((ClaimsIdentity)p.Identity).Claims);
+                string username = context.Ticket.Identity.Name;
+                var p = _securityService.CreatePrincipalForUsername(username);
+                if (p == null)
+                {
+                    Log.Warning($"Errore creazione principal per la richiesta: {username} non esiste");
+                    context.SetError("invalid_token", "Il token fornito non è valido");
+                    return;
+                }
+
+                foreach (var claim in context.Ticket.Identity.Claims)
+                {
+                    context.Ticket.Identity.RemoveClaim(claim);
+                }
+                context.Ticket.Identity.AddClaims(((ClaimsIdentity)p.Identity).Claims);
             }
             await base.ValidateIdentity(context);
         }
