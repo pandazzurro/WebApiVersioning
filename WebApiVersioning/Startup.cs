@@ -40,7 +40,7 @@ namespace WebApiVersioning
             var oAuthAuthentication = new OAuthBearerAuthenticationOptions
             {
                 AuthenticationMode = Microsoft.Owin.Security.AuthenticationMode.Active,
-                Provider = new AuthenticationOAuthProvider()
+                Provider = new AuthenticationOAuthProvider()                
             };
             app.UseOAuthBearerAuthentication(oAuthAuthentication);
             
