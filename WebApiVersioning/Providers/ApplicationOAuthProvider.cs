@@ -81,7 +81,7 @@ namespace WebApiVersioning.Providers
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public override Task TokenEndpoint(OAuthTokenEndpointContext context)
+        public override Task TokenEndpointResponse(OAuthTokenEndpointResponseContext context)
         {
             foreach (KeyValuePair<string, string> property in context.Properties.Dictionary)
             {
