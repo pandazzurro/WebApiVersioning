@@ -11,9 +11,13 @@ using System.Web.Http.Results;
 
 namespace WebApiVersioning.Controllers
 {
-    [Authorize]
     public class TestController : ApiController
     {
+        public TestController()
+        {
+            Log.Debug("Test Controller");
+        }
+
         protected override UnauthorizedResult Unauthorized(IEnumerable<AuthenticationHeaderValue> challenges)
         {
             challenges.ToList().ForEach(c => 
@@ -22,6 +26,7 @@ namespace WebApiVersioning.Controllers
             });            
             return base.Unauthorized(challenges);
         }
+
         [HttpGet]
         public async Task<IHttpActionResult> Prova()
         {

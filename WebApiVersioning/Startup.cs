@@ -43,9 +43,10 @@ namespace WebApiVersioning
                 Provider = new AuthenticationOAuthProvider()
             };
             app.UseOAuthBearerAuthentication(oAuthAuthentication);
-
+            
             var httpConfiguration = new HttpConfiguration();
             WebApiConfig.Register(httpConfiguration);
+            app.UseWebApi(httpConfiguration);
         }
     }
 }
