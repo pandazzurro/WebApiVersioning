@@ -8,7 +8,6 @@ using WebApiVersioning.Providers;
 using Serilog;
 
 [assembly: OwinStartup(typeof(WebApiVersioning.Startup))]
-
 namespace WebApiVersioning
 {
     public class Startup
@@ -21,9 +20,10 @@ namespace WebApiVersioning
                 .Destructure.ToMaximumDepth(10)
                 .MinimumLevel.Verbose()
                 .WriteTo
-                .AzureDocumentDB(uriDocumentDb, primaryKey);
-
+                .AzureDocumentDB(uriDocumentDb, primaryKey);    
             Log.Logger = cfg.CreateLogger();
+
+            Log.Debug("Startup progetto");
 
             var oAuthOptions = new OAuthAuthorizationServerOptions
             {
