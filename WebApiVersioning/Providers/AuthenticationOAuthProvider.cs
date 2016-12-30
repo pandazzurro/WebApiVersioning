@@ -48,6 +48,6 @@ namespace WebApi.Binder.Providers
                 context.Ticket.Identity.AddClaims(((ClaimsIdentity)p.Identity).Claims);
             }
             await base.ValidateIdentity(context);
-        }
+        }        
     }
 }
