@@ -8,9 +8,11 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
+using WebApi.Binder.Filter;
 
-namespace WebApiVersioning.Controllers
+namespace WebApi.Binder.Controllers
 {
+    [Grant]
     public class BaseController : ApiController
     {
         public BaseController()

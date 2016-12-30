@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -6,10 +7,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
-using WebApiVersioning.ModelBinder;
-using WebApiVersioning.Models;
+using WebApi.Binder.ModelBinder;
+using WebApi.Binder.Models;
 
-namespace WebApiVersioning.Controllers
+namespace WebApi.Binder.Controllers
 {
     public class UserController : BaseController
     {
@@ -33,12 +34,19 @@ namespace WebApiVersioning.Controllers
         }
 
         public async Task<IHttpActionResult> Post([ModelBinder(typeof(UtenteModelBinder))] UtenteViewModel utente)
-        {
-            var utenti = this.GetUsers();
-            if (utenti.Any(x => x.Codice == utente.Codice))
-                return Conflict();
+        {   
+            if (ModelState.IsValid)
+            {
+                var utenti = this.GetUsers();
+                if (utenti.Any(x => x.Codice == utente.Codice))
+                    return Conflict();
 
-            return CreatedAtRoute("DefaultApi", new { Codice = utente.Codice }, utente);
+                Log.Information("Dato Inserito {@utente}", utente);
+
+                return CreatedAtRoute("DefaultApi", new { Codice = utente.Codice }, utente);
+            }
+            else
+                return BadRequest(ModelState);
         }
     }
     
@@ -59,7 +67,7 @@ namespace WebApiVersioning.Controllers
                     Codice = $"US {i}",
                     DataNascita = DateTimeOffset.UtcNow.AddYears(-25).AddMonths(-i).AddDays(-i),
                     Descrizione = $"Utente n° {i}",
-                    Email = "US{i}@mail.com",
+                    Email = $"US{i}@mail.com",
                     Password = Guid.NewGuid().ToString("N"),
                     ScadenzaPassword = DateTimeOffset.UtcNow.AddHours(i),
                     Provincia = "VR"

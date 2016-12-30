@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace WebApiVersioning.Controllers
+namespace WebApi.Binder.Controllers
 {
     public class AdminController : BaseController
     {

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace WebApiVersioning.Models
+namespace WebApi.Binder.Models
 {
     public class UtenteViewModel
     {
@@ -22,7 +22,7 @@ namespace WebApiVersioning.Models
 
         [Required]
         [DataType(DataType.DateTime)]
-        public DateTimeOffset ScadenzaPassword { get; set; }
+        public DateTimeOffset? ScadenzaPassword { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTimeOffset DataNascita { get; set; }

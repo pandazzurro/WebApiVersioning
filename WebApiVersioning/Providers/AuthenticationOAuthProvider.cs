@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 
-namespace WebApiVersioning.Providers
+namespace WebApi.Binder.Providers
 {
     /// <summary>
     /// Provider per la verifica del token e le operazioni preliminari.
@@ -48,6 +48,6 @@ namespace WebApiVersioning.Providers
                 context.Ticket.Identity.AddClaims(((ClaimsIdentity)p.Identity).Claims);
             }
             await base.ValidateIdentity(context);
-        }
+        }        
     }
 }

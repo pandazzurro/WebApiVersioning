@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace WebApiVersioning.Models
+namespace WebApi.Binder.Models
 {
     public class AdminViewModel
     {

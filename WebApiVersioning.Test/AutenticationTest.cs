@@ -2,7 +2,7 @@
 using System.Linq;
 using Xunit;
 
-namespace WebApiVersioning.Test
+namespace WebApi.Binder.Test
 {
     public class AutenticationTest
     {

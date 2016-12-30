@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Microsoft.Owin;
 using Owin;
 using System.Web.Http;
 using Microsoft.Owin.Security.OAuth;
-using WebApiVersioning.Providers;
 using Serilog;
+using WebApi.Binder.Providers;
 
-[assembly: OwinStartup(typeof(WebApiVersioning.Startup))]
-namespace WebApiVersioning
+[assembly: OwinStartup(typeof(WebApi.Binder.Startup))]
+namespace WebApi.Binder
 {
     public class Startup
     {
@@ -45,7 +44,6 @@ namespace WebApiVersioning
                 Provider = new AuthenticationOAuthProvider(new SecurityService())
             };
             app.UseOAuthBearerAuthentication(oAuthAuthentication);
-            
 
             var httpConfiguration = new HttpConfiguration();
             WebApiConfig.Register(httpConfiguration);
