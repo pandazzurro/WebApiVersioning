@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
 
-namespace WebApiVersioning.Controllers
+namespace WebApi.Binder
 {
     [Authorize]
     public class TestController : ApiController
     { 
         public TestController()
         {
-            Log.Debug("Test Controller");
+            Log.Debug("Test Controller ");
         }
 
         protected override UnauthorizedResult Unauthorized(IEnumerable<AuthenticationHeaderValue> challenges)
@@ -31,7 +31,7 @@ namespace WebApiVersioning.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Prova()
         {
-            return Ok();
+            return Ok("Prova");
         }
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.Owin.Security.OAuth;
 using System.Text.RegularExpressions;
 using System.Security;
 
-namespace WebApiVersioning.Providers
+namespace WebApi.Binder.Providers
 {
     /// <summary>
     /// Provider OAuth utilizzato da Owin per gestire l'autenticazione dei client che si connettono alla WebApi.

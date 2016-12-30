@@ -6,7 +6,7 @@ using System.Web;
 using System.Threading.Tasks;
 using Serilog;
 
-namespace WebApiVersioning.Providers
+namespace WebApi.Binder.Providers
 {
     /// <summary>
     /// Utilizzato per settare la scadenza del token "custom" (in questo caso alla mezzanotte del giorno successivo alla creazione del token)
@@ -16,7 +16,7 @@ namespace WebApiVersioning.Providers
     {
         public override void Create(AuthenticationTokenCreateContext context)
         {
-            context.Ticket.Properties.ExpiresUtc = DateTimeOffset.UtcNow.AddDays(-1).Date;
+            context.Ticket.Properties.ExpiresUtc = DateTimeOffset.UtcNow.AddDays(1).Date;
             context.SetToken(context.SerializeTicket());
         }
 
